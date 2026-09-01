@@ -14,7 +14,7 @@ def main():
         print("---", end="\n\n")
         for line in file:
             print(line, end="")
-        print("\n---")
+        print("\n\n---")
         file.close()
         if file.closed:
             print(f"File '{sys.argv[1]}' closed.")
@@ -22,6 +22,7 @@ def main():
         print(f"Error opening file '{sys.argv[1]}': {e}")
     except PermissionError as e:
         print(f"Error opening file '{sys.argv[1]}': {e}")
+
 
 if __name__ == "__main__":
     main()
