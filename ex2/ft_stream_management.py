@@ -15,7 +15,7 @@ def get_content(file_name: str) -> list[str]:
         if file.closed:
             print(f"File '{file_name}' closed.")
     except (FileNotFoundError, PermissionError) as e:
-        print(f"Error opening file '{sys.argv[1]}': {e}")
+        sys.stderr.write(f"[STDERR] Error opening file '{file_name}': {e}\n")
         sys.exit(1)
     return content
 
@@ -45,21 +45,28 @@ def write_content(file_name: str, content: list[str]) -> None:
         if file.closed:
             print(f"Data saved in file '{file_name}'.")
     except (FileNotFoundError, PermissionError) as e:
-        print(f"Error opening file '{sys.argv[1]}': {e}")
-        sys.exit(1)
+        sys.stderr.write(f"[STDERR] Error opening file '{file_name}': {e}\n")
+        print("Data not saved.")
+        sys.exit(0)
+
+
+def read_input(label: str) -> str:
+    print(label, end="", flush=True)
+    return sys.stdin.readline().rstrip("\n")
 
 
 def main() -> None:
     if len(sys.argv) == 1:
-        print("Usage: ft_archive_creation.py <file>")
+        print("Usage: ft_stream_management.py <file>")
         return
     print("=== Cyber Archives Recovery & Preservation ===")
     content = get_content(sys.argv[1])
     print("\nTransform data:")
     content = transform_data(content)
-    file_name = input("Enter new file name (or empty): ")
+    file_name = read_input("Enter new file name (or empty): ")
     if not file_name:
         return print("Not saving data.")
+    print(f"Saving data to '{file_name}'", flush=True)
 
     write_content(file_name, content)
 
