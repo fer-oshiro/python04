@@ -4,6 +4,7 @@ import sys
 
 def get_content(file_name: str) -> list[str]:
     content = []
+    print(f"Accessing file '{file_name}'")
     try:
         file = open(file_name, 'r')
         print("---", end="\n\n")
@@ -15,7 +16,7 @@ def get_content(file_name: str) -> list[str]:
         if file.closed:
             print(f"File '{file_name}' closed.")
     except (FileNotFoundError, PermissionError) as e:
-        print(f"Error opening file '{sys.argv[1]}': {e}")
+        print(f"Error opening file '{file_name}': {e}")
         sys.exit(1)
     return content
 
@@ -37,6 +38,7 @@ def transform_data(content: list[str]) -> list[str]:
 
 
 def write_content(file_name: str, content: list[str]) -> None:
+    print(f"Saving data to '{file_name}'")
     try:
         file = open(file_name, 'w')
         for line in content:
@@ -45,7 +47,7 @@ def write_content(file_name: str, content: list[str]) -> None:
         if file.closed:
             print(f"Data saved in file '{file_name}'.")
     except (FileNotFoundError, PermissionError) as e:
-        print(f"Error opening file '{sys.argv[1]}': {e}")
+        print(f"Error opening file '{file_name}': {e}")
         sys.exit(1)
 
 
