@@ -2,19 +2,21 @@
 import sys
 
 
-def get_content(file_name: str) -> list[str]:
-    print(f"Accessing file '{file_name}'")
+def get_content(filename: str) -> list[str]:
+    print(f"Accessing file '{filename}'")
     try:
-        file = open(file_name, 'r')
-    except (FileNotFoundError, PermissionError) as e:
-        print(f"Error opening file '{file_name}': {e}")
+        file = open(filename, 'r')
+        print("---", end="\n\n")
+        data = file.read()
+        print(data)
+        print("\n---")
+    except (OSError, UnicodeDecodeError) as e:
+        print(f"Error opening file '{filename}': {e}")
         return []
-    print("---", end="\n\n")
-    data = file.read()
-    print(data)
-    print("\n---")
-    file.close()
-    print(f"File '{file_name}' closed.")
+    finally:
+        if file is not None:
+            file.close()
+            print(f"File '{filename}' closed.")
     return data.splitlines(keepends=True)
 
 
@@ -38,7 +40,7 @@ def write_content(file_name: str, content: list[str]) -> None:
     print(f"Saving data to '{file_name}'")
     try:
         file = open(file_name, 'w')
-    except (FileNotFoundError, PermissionError) as e:
+    except (OSError, UnicodeDecodeError) as e:
         print(f"Error opening file '{file_name}': {e}")
         return
     for line in content:
@@ -60,7 +62,6 @@ def main() -> None:
     file_name = input("Enter new file name (or empty): ")
     if not file_name:
         return print("Not saving data.")
-
     write_content(file_name, content)
 
 
