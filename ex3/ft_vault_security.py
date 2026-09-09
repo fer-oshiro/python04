@@ -4,6 +4,8 @@ def secure_archive(
         filename: str, mode: str = "r", content: str = ""
         ) -> tuple[bool, str]:
     try:
+        if mode not in ("r", "w"):
+            return (False, f"Invalid mode '{mode}': use 'r' or 'w'")
         with open(filename, mode, encoding="utf-8") as file:
             if mode == "r":
                 content = file.read()
@@ -11,7 +13,7 @@ def secure_archive(
             else:
                 file.write(content)
                 return (True, "Content successfully written to file")
-    except OSError as e:
+    except (OSError, UnicodeDecodeError) as e:
         return (False, str(e))
 
 
