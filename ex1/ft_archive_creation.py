@@ -54,6 +54,15 @@ def write_content(filename: str, content: list[str]) -> None:
     print(f"Data saved in file '{filename}'.")
 
 
+def read_input(label: str) -> str:
+    try:
+        filename = input(label)
+    except EOFError:
+        print()
+        filename = ""
+    return filename
+
+
 def main() -> None:
     if len(sys.argv) != 2:
         print("Usage: ft_archive_creation.py <file>")
@@ -64,7 +73,7 @@ def main() -> None:
         return
     print("\nTransform data:")
     content = transform_data(content)
-    filename = input("Enter new file name (or empty): ")
+    filename = read_input("Enter new file name (or empty): ")
     if not filename:
         print("Not saving data.")
         return
