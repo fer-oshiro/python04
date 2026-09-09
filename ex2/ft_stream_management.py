@@ -14,7 +14,8 @@ def get_content(file_name: str) -> list[str]:
         file.close()
         if file.closed:
             print(f"File '{file_name}' closed.")
-    except (FileNotFoundError, PermissionError) as e:
+    except OSError as e:
+        sys.stdout.flush()
         sys.stderr.write(f"[STDERR] Error opening file '{file_name}': {e}\n")
         sys.exit(1)
     return content
@@ -44,7 +45,8 @@ def write_content(file_name: str, content: list[str]) -> None:
         file.close()
         if file.closed:
             print(f"Data saved in file '{file_name}'.")
-    except (FileNotFoundError, PermissionError) as e:
+    except OSError as e:
+        sys.stdout.flush()
         sys.stderr.write(f"[STDERR] Error opening file '{file_name}': {e}\n")
         print("Data not saved.")
         sys.exit(0)
