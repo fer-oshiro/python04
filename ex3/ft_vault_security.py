@@ -3,9 +3,9 @@
 def secure_archive(
         filename: str, mode: str = "r", content: str = ""
         ) -> tuple[bool, str]:
+    if mode not in ("r", "w"):
+        return (False, f"Invalid mode '{mode}': use 'r' or 'w'")
     try:
-        if mode not in ("r", "w"):
-            return (False, f"Invalid mode '{mode}': use 'r' or 'w'")
         with open(filename, mode, encoding="utf-8") as file:
             if mode == "r":
                 content = file.read()

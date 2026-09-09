@@ -2,8 +2,10 @@
 import sys
 
 
-def get_content(filename: str) -> list[str]:
+def get_content(filename: str) -> list[str] | None:
     print(f"Accessing file '{filename}'")
+    file = None
+    data = ""
     try:
         file = open(filename, 'r')
         print("---", end="\n\n")
@@ -12,7 +14,7 @@ def get_content(filename: str) -> list[str]:
         print("\n---")
     except (OSError, UnicodeDecodeError) as e:
         print(f"Error opening file '{filename}': {e}")
-        return []
+        return None
     finally:
         if file is not None:
             file.close()
@@ -36,33 +38,37 @@ def transform_data(content: list[str]) -> list[str]:
     return transform_content
 
 
-def write_content(file_name: str, content: list[str]) -> None:
-    print(f"Saving data to '{file_name}'")
+def write_content(filename: str, content: list[str]) -> None:
+    print(f"Saving data to '{filename}'")
+    file = None
     try:
-        file = open(file_name, 'w')
-    except (OSError, UnicodeDecodeError) as e:
-        print(f"Error opening file '{file_name}': {e}")
+        file = open(filename, 'w')
+        for line in content:
+            file.write(line)
+    except OSError as e:
+        print(f"Error opening file '{filename}': {e}")
         return
-    for line in content:
-        file.write(line)
-    file.close()
-    print(f"Data saved in file '{file_name}'.")
+    finally:
+        if file is not None:
+            file.close()
+    print(f"Data saved in file '{filename}'.")
 
 
 def main() -> None:
-    if len(sys.argv) == 1:
+    if len(sys.argv) != 2:
         print("Usage: ft_archive_creation.py <file>")
         return
     print("=== Cyber Archives Recovery & Preservation ===")
     content = get_content(sys.argv[1])
-    if not content:
+    if content is None:
         return
     print("\nTransform data:")
     content = transform_data(content)
-    file_name = input("Enter new file name (or empty): ")
-    if not file_name:
-        return print("Not saving data.")
-    write_content(file_name, content)
+    filename = input("Enter new file name (or empty): ")
+    if not filename:
+        print("Not saving data.")
+        return
+    write_content(filename, content)
 
 
 if __name__ == "__main__":

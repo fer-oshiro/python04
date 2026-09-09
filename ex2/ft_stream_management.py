@@ -2,23 +2,30 @@
 import sys
 
 
-def get_content(file_name: str) -> list[str]:
-    content = []
+def print_error(message: str) -> None:
+    sys.stdout.flush()
+    sys.stderr.write(f"[STDERR] {message}\n")
+    sys.stderr.flush()
+
+
+def get_content(filename: str) -> list[str] | None:
+    print(f"Accessing file '{filename}'")
+    file = None
+    data = ""
     try:
-        file = open(file_name, 'r')
+        file = open(filename, 'r')
         print("---", end="\n\n")
-        for line in file:
-            print(line, end="")
-            content.append(line)
-        print("\n\n---")
-        file.close()
-        if file.closed:
-            print(f"File '{file_name}' closed.")
+        data = file.read()
+        print(data, end="")
+        print("\n---")
     except (OSError, UnicodeDecodeError) as e:
-        sys.stdout.flush()
-        sys.stderr.write(f"[STDERR] Error opening file '{file_name}': {e}\n")
-        sys.exit(1)
-    return content
+        print_error(f"Error opening file '{filename}': {e}")
+        return None
+    finally:
+        if file is not None:
+            file.close()
+            print(f"File '{filename}' closed.")
+    return data.splitlines(keepends=True)
 
 
 def transform_data(content: list[str]) -> list[str]:
@@ -33,23 +40,25 @@ def transform_data(content: list[str]) -> list[str]:
         new_line = update_line(line)
         print(new_line, end="")
         transform_content.append(new_line)
-    print("\n\n---")
+    print("\n---")
     return transform_content
 
 
-def write_content(file_name: str, content: list[str]) -> None:
+def write_content(filename: str, content: list[str]) -> None:
+    print(f"Saving data to '{filename}'")
+    file = None
     try:
-        file = open(file_name, 'w')
+        file = open(filename, 'w')
         for line in content:
             file.write(line)
-        file.close()
-        if file.closed:
-            print(f"Data saved in file '{file_name}'.")
     except OSError as e:
-        sys.stdout.flush()
-        sys.stderr.write(f"[STDERR] Error opening file '{file_name}': {e}\n")
+        print_error(f"Error opening file '{filename}': {e}")
         print("Data not saved.")
-        sys.exit(0)
+        return
+    finally:
+        if file is not None:
+            file.close()
+    print(f"Data saved in file '{filename}'.")
 
 
 def read_input(label: str) -> str:
@@ -58,19 +67,20 @@ def read_input(label: str) -> str:
 
 
 def main() -> None:
-    if len(sys.argv) == 1:
+    if len(sys.argv) != 2:
         print("Usage: ft_stream_management.py <file>")
         return
     print("=== Cyber Archives Recovery & Preservation ===")
     content = get_content(sys.argv[1])
+    if content is None:
+        return
     print("\nTransform data:")
     content = transform_data(content)
-    file_name = read_input("Enter new file name (or empty): ")
-    if not file_name:
-        return print("Not saving data.")
-    print(f"Saving data to '{file_name}'", flush=True)
-
-    write_content(file_name, content)
+    filename = read_input("Enter new file name (or empty): ")
+    if not filename:
+        print("Not saving data.")
+        return
+    write_content(filename, content)
 
 
 if __name__ == "__main__":
