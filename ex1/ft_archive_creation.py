@@ -3,22 +3,19 @@ import sys
 
 
 def get_content(file_name: str) -> list[str]:
-    content = []
     print(f"Accessing file '{file_name}'")
     try:
         file = open(file_name, 'r')
-        print("---", end="\n\n")
-        for line in file:
-            print(line, end="")
-            content.append(line)
-        print("\n\n---")
-        file.close()
-        if file.closed:
-            print(f"File '{file_name}' closed.")
     except (FileNotFoundError, PermissionError) as e:
         print(f"Error opening file '{file_name}': {e}")
-        sys.exit(1)
-    return content
+        return []
+    print("---", end="\n\n")
+    data = file.read()
+    print(data)
+    print("\n---")
+    file.close()
+    print(f"File '{file_name}' closed.")
+    return data.splitlines(keepends=True)
 
 
 def transform_data(content: list[str]) -> list[str]:
@@ -41,14 +38,13 @@ def write_content(file_name: str, content: list[str]) -> None:
     print(f"Saving data to '{file_name}'")
     try:
         file = open(file_name, 'w')
-        for line in content:
-            file.write(line)
-        file.close()
-        if file.closed:
-            print(f"Data saved in file '{file_name}'.")
     except (FileNotFoundError, PermissionError) as e:
         print(f"Error opening file '{file_name}': {e}")
-        sys.exit(1)
+        return
+    for line in content:
+        file.write(line)
+    file.close()
+    print(f"Data saved in file '{file_name}'.")
 
 
 def main() -> None:
@@ -57,6 +53,8 @@ def main() -> None:
         return
     print("=== Cyber Archives Recovery & Preservation ===")
     content = get_content(sys.argv[1])
+    if not content:
+        return
     print("\nTransform data:")
     content = transform_data(content)
     file_name = input("Enter new file name (or empty): ")
